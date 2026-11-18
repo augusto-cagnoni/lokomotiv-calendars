@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendario Lokomotiv Prenestino</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
+body{margin:0}
+/* Layout: intestazione con binari, "biglietto" della prossima partita, poi una card per partita divise per mese */
+:root{
+  --bg:#ECEFEC; --card:#FFFFFF; --ink:#14181B; --muted:#5C676D; --line:#D6DCD8;
+  --accent:#C8261B; --on-accent:#FFFFFF;
+  --board:#14181B; --board-ink:#F1F4F2; --board-muted:#9AA6AB; --board-line:#354045;
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --font-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1112; --card:#171B1D; --ink:#EEF1EF; --muted:#93A0A6; --line:#262D30;
+    --accent:#FF5A4D; --on-accent:#1B0907;
+    --board:#1F2629; --board-ink:#F1F4F2; --board-muted:#9AA6AB; --board-line:#3A464B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1112; --card:#171B1D; --ink:#EEF1EF; --muted:#93A0A6; --line:#262D30;
+  --accent:#FF5A4D; --on-accent:#1B0907;
+  --board:#1F2629; --board-ink:#F1F4F2; --board-muted:#9AA6AB; --board-line:#3A464B;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.4 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{
+  max-width:520px;margin-inline:auto;padding-block:24px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Intestazione */
+.kicker{font:600 12px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{margin:12px 0 0;font:700 clamp(46px,14vw,64px)/.9 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
+h1 span{display:block}
+.track{height:12px;margin-top:18px;border-block:2px solid var(--ink);background:repeating-linear-gradient(90deg,transparent 0 8px,var(--muted) 8px 10px)}
+.tally{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:14px;font-size:14px;color:var(--muted)}
+.tally b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Pulsanti */
+.actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 14px;
+  border:1.5px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);
+  font:600 14px/1 var(--font-body);text-decoration:none;white-space:nowrap;
+}
+.btn svg{width:18px;height:18px;flex:none}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+@media (max-width:380px){.actions{grid-template-columns:minmax(0,1fr)}}
+
+/* Etichette */
+.tag{
+  display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid var(--line);border-radius:6px;
+  font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;
+}
+.tag.home{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.tag.next{border-color:var(--accent);color:var(--accent)}
+.chip{
+  display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;
+  background:var(--accent);color:var(--on-accent);font:600 12px/1 var(--font-body);letter-spacing:.04em;white-space:nowrap;
+}
+
+/* Biglietto: prossima partita */
+.ticket{position:relative;margin-top:24px;background:var(--board);color:var(--board-ink);border-radius:22px}
+.t-main{padding:20px 20px 22px}
+.t-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.t-label{font:600 12px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--board-muted)}
+.t-time{margin-top:18px;font:700 clamp(72px,24vw,96px)/.85 var(--font-display);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.t-date{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:12px;font-size:18px;font-weight:500}
+.t-opp{margin-top:22px;font:700 30px/1.02 var(--font-display);text-transform:uppercase;letter-spacing:.02em;text-wrap:balance}
+.t-opp small{display:block;margin-bottom:6px;font:600 12px/1 var(--font-body);letter-spacing:.14em;color:var(--board-muted)}
+.t-tear{position:relative;height:0;margin:0 14px;border-top:2px dashed var(--board-line)}
+.t-tear::before,.t-tear::after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--bg)}
+.t-tear::before{left:-26px}
+.t-tear::after{right:-26px}
+.t-actions{padding:18px 20px 20px}
+.ticket .venue{color:var(--board-muted)}
+.ticket .venue b{color:var(--board-ink)}
+.ticket .tag{border-color:var(--board-line);color:var(--board-muted)}
+.ticket .tag.home{background:var(--board-ink);border-color:var(--board-ink);color:var(--board)}
+.ticket .btn:not(.primary){border-color:var(--board-line);color:var(--board-ink)}
+
+/* Elenco */
+.month{display:flex;align-items:center;gap:12px;margin:30px 0 12px;font:600 13px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.month::after{content:"";flex:1;height:1px;background:var(--line)}
+.match{
+  display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;margin-bottom:10px;padding:14px;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+}
+.match.past{opacity:.6}
+.date{display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:2px;text-transform:uppercase;color:var(--muted)}
+.dow,.mon{font:600 12px/1 var(--font-body);letter-spacing:.1em}
+.day{font:700 44px/.9 var(--font-display);color:var(--ink);font-variant-numeric:tabular-nums}
+.info{min-width:0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.time{font:600 22px/1 var(--font-display);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.opp{margin-top:10px;font:700 24px/1.05 var(--font-display);text-transform:uppercase;letter-spacing:.02em;text-wrap:balance}
+.opp small{display:block;margin-bottom:5px;font:600 11px/1 var(--font-body);letter-spacing:.14em;color:var(--muted)}
+.venue{display:flex;gap:8px;margin-top:12px;font-size:14px;line-height:1.35;color:var(--muted)}
+.venue svg{width:16px;height:16px;margin-top:2px;flex:none}
+.venue b{display:block;color:var(--ink);font-weight:600}
+.venue span{min-width:0}
+.match .actions{grid-column:1 / -1;margin-top:2px}
+
+.foot{margin-top:28px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">Campionato UISP · 2026/27</div>
+    <h1>Lokomotiv <span>Prenestino</span></h1>
+    <div class="track" aria-hidden="true"></div>
+    <div class="tally" id="tally"></div>
+  </header>
+
+  <section class="ticket" id="ticket" aria-label="Prossima partita"></section>
+
+  <main id="list"></main>
+
+  <p class="foot">Il pulsante Aggiungi al calendario apre Google Calendar con data, ora e indirizzo già compilati.</p>
+</div>
+
+<script>
+(function () {
+  const TEAM = 'Lokomotiv Prenestino';
+  const DURATION_MIN = 90;
+
+  // Tutte le partite cadono in ora solare (CET, UTC+1): l'ora legale riparte il 28 marzo 2027.
+  const VENUES = {
+    snia:   { name: 'SNIA', addr: 'Via Prenestina 173, 00176 Roma' },
+    morena: { name: 'S. Anna Morena', addr: 'Via di Torre Morena 61, Roma' },
+    giuda:  { name: 'Palestra San Giuda Taddeo', addr: 'Largo Tacchi Venturi 42, Roma' },
+    salgen: { name: 'Palestra Centro Giovanile Salgen', addr: 'Via Mauro Morrone 27, Roma' },
+    pio:    { name: 'Arena Pio XI', addr: 'Via Giacomo Costamagna 16, Roma' },
+    cave:   { name: 'Tensostruttura Andrea Lucidi', addr: 'Via Giacomo Matteotti snc, Cave (RM)' }
+  };
+
+  const MATCHES = [
+    { d: '2026-11-21', t: '15:00', home: true,  opp: 'Basket Cavese Bianco', v: 'snia' },
+    { d: '2026-12-03', t: '21:20', home: false, opp: 'S. Anna Morena',       v: 'morena' },
+    { d: '2026-12-14', t: '21:15', home: false, opp: 'San Giuda Taddeo',     v: 'giuda' },
+    { d: '2026-12-22', t: '21:30', home: false, opp: 'PGS Salgen Roma',      v: 'salgen' },
+    { d: '2027-01-09', t: '15:00', home: true,  opp: 'PGS Salgen Roma',      v: 'snia' },
+    { d: '2027-01-19', t: '21:30', home: false, opp: 'PGS Flipper',          v: 'pio' },
+    { d: '2027-01-27', t: '20:50', home: false, opp: 'Basket Cavese Bianco', v: 'cave' },
+    { d: '2027-01-30', t: '15:00', home: true,  opp: 'S. Anna Morena',       v: 'snia' },
+    { d: '2027-02-13', t: '15:00', home: true,  opp: 'San Giuda Taddeo',     v: 'snia' },
+    { d: '2027-03-06', t: '15:00', home: true,  opp: 'PGS Flipper',          v: 'snia' }
+  ];
+
+  const ICON = {
+    cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18M12 13.5v5M9.5 16h5"/></svg>',
+    nav: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 20.5 3.5 13 20.5l-2-7.5z"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>'
+  };
+
+  const tz = { timeZone: 'Europe/Rome' };
+  const fmt = (o) => new Intl.DateTimeFormat('it-IT', Object.assign({}, tz, o));
+  const fDowShort = fmt({ weekday: 'short' });
+  const fDowLong = fmt({ weekday: 'long' });
+  const fDay = fmt({ day: 'numeric' });
+  const fMonShort = fmt({ month: 'short' });
+  const fMonLong = fmt({ month: 'long' });
+  const fMonthYear = fmt({ month: 'long', year: 'numeric' });
+  const romeDay = new Intl.DateTimeFormat('en-CA', tz);
+
+  const clean = (s) => s.replace('.', '');
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const pad = (n) => String(n).padStart(2, '0');
+  const mins = (t) => { const p = t.split(':'); return Number(p[0]) * 60 + Number(p[1]); };
+  const hhmm = (n) => pad(Math.floor(n / 60)) + pad(n % 60);
+  const enc = encodeURIComponent;
+  const dayDiff = (a, b) =>
+    Math.round((Date.parse(romeDay.format(b) + 'T00:00:00Z') - Date.parse(romeDay.format(a) + 'T00:00:00Z')) / 864e5);
+
+  const now = new Date();
+
+  const matches = MATCHES.map((m) => {
+    const venue = VENUES[m.v];
+    const start = new Date(m.d + 'T' + m.t + ':00+01:00');
+    const end = new Date(start.getTime() + DURATION_MIN * 60000);
+    const day = m.d.replace(/-/g, '');
+    const title = (m.home ? TEAM + ' – ' + m.opp : m.opp + ' – ' + TEAM) + ' (UISP)';
+    const where = venue.name + ', ' + venue.addr;
+    const gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+      + '&text=' + enc(title)
+      + '&dates=' + day + 'T' + m.t.replace(':', '') + '00/' + day + 'T' + hhmm(mins(m.t) + DURATION_MIN) + '00'
+      + '&ctz=' + enc('Europe/Rome')
+      + '&location=' + enc(where)
+      + '&details=' + enc('Campionato UISP · ' + (m.home ? 'In casa' : 'In trasferta'));
+    const maps = 'https://www.google.com/maps/dir/?api=1&destination=' + enc(where);
+    return {
+      t: m.t, home: m.home, opp: m.opp, venue: venue, start: start, end: end, gcal: gcal, maps: maps,
+      dow: clean(fDowShort.format(start)), dowLong: cap(fDowLong.format(start)),
+      day: fDay.format(start), mon: clean(fMonShort.format(start)), monLong: fMonLong.format(start),
+      group: cap(fMonthYear.format(start))
+    };
+  });
+
+  const esc = (u) => u.replace(/&/g, '&amp;');
+  const actions = (m) =>
+    '<div class="actions">'
+    + '<a class="btn primary" href="' + esc(m.gcal) + '" target="_blank" rel="noopener">' + ICON.cal + 'Aggiungi al calendario</a>'
+    + '<a class="btn" href="' + esc(m.maps) + '" target="_blank" rel="noopener">' + ICON.nav + 'Mappa</a>'
+    + '</div>';
+  const venueHTML = (m) => '<div class="venue">' + ICON.pin + '<span><b>' + m.venue.name + '</b>' + m.venue.addr + '</span></div>';
+  const homeTag = (m) => '<span class="tag' + (m.home ? ' home' : '') + '">' + (m.home ? 'In casa' : 'In trasferta') + '</span>';
+
+  const next = matches.find((m) => m.end > now);
+
+  // Tabella riassuntiva
+  const nHome = matches.filter((m) => m.home).length;
+  document.getElementById('tally').innerHTML =
+    '<span><b>' + matches.length + '</b> partite</span>'
+    + '<span><b>' + nHome + '</b> in casa</span>'
+    + '<span><b>' + (matches.length - nHome) + '</b> in trasferta</span>';
+
+  // Biglietto con la prossima partita
+  const ticket = document.getElementById('ticket');
+  if (next) {
+    const n = dayDiff(now, next.start);
+    const when = n <= 0 ? 'Oggi' : n === 1 ? 'Domani' : 'Tra ' + n + ' giorni';
+    ticket.innerHTML =
+      '<div class="t-main">'
+      + '<div class="t-top"><span class="t-label">Prossima partita</span><span class="chip">' + when + '</span></div>'
+      + '<div class="t-time">' + next.t + '</div>'
+      + '<div class="t-date"><span>' + next.dowLong + ' ' + next.day + ' ' + next.monLong + '</span>' + homeTag(next) + '</div>'
+      + '<div class="t-opp"><small>VS</small>' + next.opp + '</div>'
+      + venueHTML(next)
+      + '</div>'
+      + '<div class="t-tear" aria-hidden="true"></div>'
+      + '<div class="t-actions">' + actions(next) + '</div>';
+  } else {
+    ticket.innerHTML = '<div class="t-main"><div class="t-top"><span class="t-label">Stagione conclusa</span></div>'
+      + '<div class="t-opp">Grazie a tutti</div></div>';
+  }
+
+  // Elenco completo diviso per mese
+  const card = (m) => {
+    const past = m.end <= now;
+    const tags = (m === next ? '<span class="tag next">Prossima</span>' : '')
+      + (past ? '<span class="tag">Giocata</span>' : '')
+      + homeTag(m);
+    return '<article class="match' + (past ? ' past' : '') + '">'
+      + '<div class="date"><span class="dow">' + m.dow + '</span><span class="day">' + m.day + '</span><span class="mon">' + m.mon + '</span></div>'
+      + '<div class="info">'
+      + '<div class="row"><span class="time">' + m.t + '</span><span class="tags">' + tags + '</span></div>'
+      + '<div class="opp"><small>VS</small>' + m.opp + '</div>'
+      + venueHTML(m)
+      + '</div>'
+      + (past ? '' : actions(m))
+      + '</article>';
+  };
+
+  let html = '';
+  let current = '';
+  matches.forEach((m) => {
+    if (m.group !== current) {
+      current = m.group;
+      html += '<h2 class="month">' + current + '</h2>';
+    }
+    html += card(m);
+  });
+  document.getElementById('list').innerHTML = html;
+})();
+</script>
+</body>
+</html>

@@ -135,7 +135,7 @@ h1 span{display:block}
 
   <main id="list"></main>
 
-  <p class="foot">Il pulsante Aggiungi al calendario apre Google Calendar con data, ora e indirizzo già compilati.</p>
+  <p class="foot">Il pulsante Aggiungi al calendario scarica un file .ics: aprilo e la partita entra nel calendario del telefono, con orario e indirizzo. <a href="Lokomotiv-Prenestino-2026-27.ics" download>Scarica tutte le partite</a>.</p>
 </div>
 
 <script>
@@ -208,7 +208,7 @@ h1 span{display:block}
       + '&details=' + enc('Campionato UISP · ' + (m.home ? 'In casa' : 'In trasferta'));
     const maps = 'https://www.google.com/maps/dir/?api=1&destination=' + enc(where);
     return {
-      t: m.t, home: m.home, opp: m.opp, venue: venue, start: start, end: end, gcal: gcal, maps: maps,
+      t: m.t, home: m.home, opp: m.opp, venue: venue, start: start, end: end, gcal: gcal, maps: maps, ics: 'ics/' + m.d + '.ics',
       dow: clean(fDowShort.format(start)), dowLong: cap(fDowLong.format(start)),
       day: fDay.format(start), mon: clean(fMonShort.format(start)), monLong: fMonLong.format(start),
       group: cap(fMonthYear.format(start))
@@ -218,7 +218,7 @@ h1 span{display:block}
   const esc = (u) => u.replace(/&/g, '&amp;');
   const actions = (m) =>
     '<div class="actions">'
-    + '<a class="btn primary" href="' + esc(m.gcal) + '" target="_blank" rel="noopener">' + ICON.cal + 'Aggiungi al calendario</a>'
+    + '<a class="btn primary" href="' + m.ics + '" download>' + ICON.cal + 'Aggiungi al calendario</a>'
     + '<a class="btn" href="' + esc(m.maps) + '" target="_blank" rel="noopener">' + ICON.nav + 'Mappa</a>'
     + '</div>';
   const venueHTML = (m) => '<div class="venue">' + ICON.pin + '<span><b>' + m.venue.name + '</b>' + m.venue.addr + '</span></div>';

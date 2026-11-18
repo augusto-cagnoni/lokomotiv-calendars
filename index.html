@@ -4,36 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Calendario Lokomotiv Prenestino</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#24502C">
+<link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
 <style>
 :root{padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
 body{margin:0}
-/* Layout: intestazione con binari, "biglietto" della prossima partita, poi una card per partita divise per mese */
+/* Verde del logo come fondo, testi bianchi, rosso e giallo per le azioni */
 :root{
-  --bg:#ECEFEC; --card:#FFFFFF; --ink:#14181B; --muted:#5C676D; --line:#D6DCD8;
-  --accent:#C8261B; --on-accent:#FFFFFF;
-  --board:#14181B; --board-ink:#F1F4F2; --board-muted:#9AA6AB; --board-line:#354045;
+  --bg:#24502C; --surface:#2C6035; --deep:#17361E; --line:rgba(255,255,255,.16);
+  --ink:#FFFFFF; --muted:#C3D6C6;
+  --red:#CC2827; --yellow:#F5CF46; --on-yellow:#14181B;
   --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
   --font-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0E1112; --card:#171B1D; --ink:#EEF1EF; --muted:#93A0A6; --line:#262D30;
-    --accent:#FF5A4D; --on-accent:#1B0907;
-    --board:#1F2629; --board-ink:#F1F4F2; --board-muted:#9AA6AB; --board-line:#3A464B;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0E1112; --card:#171B1D; --ink:#EEF1EF; --muted:#93A0A6; --line:#262D30;
-  --accent:#FF5A4D; --on-accent:#1B0907;
-  --board:#1F2629; --board-ink:#F1F4F2; --board-muted:#9AA6AB; --board-line:#3A464B;
   color-scheme:dark;
 }
-
 *,*::before,*::after{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:400 16px/1.4 var(--font-body);-webkit-text-size-adjust:100%}
 .wrap{
@@ -41,13 +28,15 @@ body{background:var(--bg);color:var(--ink);font:400 16px/1.4 var(--font-body);-w
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
 }
-a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
 
 /* Intestazione */
+.brand{display:flex;align-items:center;gap:16px}
+.logo{flex:none;display:block;width:96px;height:96px;padding:6px;border-radius:24px;background:#fff;object-fit:contain}
 .kicker{font:600 12px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-h1{margin:12px 0 0;font:700 clamp(46px,14vw,64px)/.9 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
+h1{margin:10px 0 0;font:700 clamp(38px,11.5vw,56px)/.9 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
 h1 span{display:block}
-.track{height:12px;margin-top:18px;border-block:2px solid var(--ink);background:repeating-linear-gradient(90deg,transparent 0 8px,var(--muted) 8px 10px)}
+.track{height:12px;margin-top:20px;border-block:2px solid var(--ink);background:repeating-linear-gradient(90deg,transparent 0 8px,var(--muted) 8px 10px)}
 .tally{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:14px;font-size:14px;color:var(--muted)}
 .tally b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 
@@ -55,52 +44,47 @@ h1 span{display:block}
 .actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 14px;
-  border:1.5px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);
+  border:1.5px solid rgba(255,255,255,.4);border-radius:12px;background:transparent;color:var(--ink);
   font:600 14px/1 var(--font-body);text-decoration:none;white-space:nowrap;
 }
 .btn svg{width:18px;height:18px;flex:none}
 .btn:active{transform:translateY(1px)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:var(--on-yellow)}
 @media (max-width:380px){.actions{grid-template-columns:minmax(0,1fr)}}
 
 /* Etichette */
 .tag{
-  display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid var(--line);border-radius:6px;
-  font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;
+  display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid rgba(255,255,255,.4);border-radius:6px;
+  font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);white-space:nowrap;
 }
-.tag.home{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.tag.next{border-color:var(--accent);color:var(--accent)}
+.tag.home{background:var(--red);border-color:var(--red);color:#fff}
+.tag.next{border-color:var(--yellow);color:var(--yellow)}
 .chip{
   display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;
-  background:var(--accent);color:var(--on-accent);font:600 12px/1 var(--font-body);letter-spacing:.04em;white-space:nowrap;
+  background:var(--red);color:#fff;font:600 12px/1 var(--font-body);letter-spacing:.04em;white-space:nowrap;
 }
 
 /* Biglietto: prossima partita */
-.ticket{position:relative;margin-top:24px;background:var(--board);color:var(--board-ink);border-radius:22px}
+.ticket{position:relative;margin-top:24px;background:var(--deep);color:var(--ink);border-radius:22px}
 .t-main{padding:20px 20px 22px}
 .t-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.t-label{font:600 12px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--board-muted)}
-.t-time{margin-top:18px;font:700 clamp(72px,24vw,96px)/.85 var(--font-display);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.t-label{font:600 12px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.t-time{margin-top:18px;font:700 clamp(72px,24vw,96px)/.85 var(--font-display);letter-spacing:.01em;font-variant-numeric:tabular-nums;color:var(--yellow)}
 .t-date{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:12px;font-size:18px;font-weight:500}
 .t-opp{margin-top:22px;font:700 30px/1.02 var(--font-display);text-transform:uppercase;letter-spacing:.02em;text-wrap:balance}
-.t-opp small{display:block;margin-bottom:6px;font:600 12px/1 var(--font-body);letter-spacing:.14em;color:var(--board-muted)}
-.t-tear{position:relative;height:0;margin:0 14px;border-top:2px dashed var(--board-line)}
+.t-opp small{display:block;margin-bottom:6px;font:600 12px/1 var(--font-body);letter-spacing:.14em;color:var(--muted)}
+.t-tear{position:relative;height:0;margin:0 14px;border-top:2px dashed rgba(255,255,255,.22)}
 .t-tear::before,.t-tear::after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--bg)}
 .t-tear::before{left:-26px}
 .t-tear::after{right:-26px}
 .t-actions{padding:18px 20px 20px}
-.ticket .venue{color:var(--board-muted)}
-.ticket .venue b{color:var(--board-ink)}
-.ticket .tag{border-color:var(--board-line);color:var(--board-muted)}
-.ticket .tag.home{background:var(--board-ink);border-color:var(--board-ink);color:var(--board)}
-.ticket .btn:not(.primary){border-color:var(--board-line);color:var(--board-ink)}
 
 /* Elenco */
 .month{display:flex;align-items:center;gap:12px;margin:30px 0 12px;font:600 13px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .month::after{content:"";flex:1;height:1px;background:var(--line)}
 .match{
   display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;margin-bottom:10px;padding:14px;
-  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
 }
 .match.past{opacity:.6}
 .date{display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:2px;text-transform:uppercase;color:var(--muted)}
@@ -119,14 +103,20 @@ h1 span{display:block}
 .match .actions{grid-column:1 / -1;margin-top:2px}
 
 .foot{margin-top:28px;font-size:13px;color:var(--muted)}
+.foot a{color:var(--yellow)}
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <div class="kicker">Campionato UISP · 2026/27</div>
-    <h1>Lokomotiv <span>Prenestino</span></h1>
+    <div class="brand">
+      <img class="logo" src="logo.png" alt="Logo Lokomotiv Prenestino" width="96" height="96">
+      <div>
+        <div class="kicker">Campionato UISP · 2026/27</div>
+        <h1>Lokomotiv <span>Prenestino</span></h1>
+      </div>
+    </div>
     <div class="track" aria-hidden="true"></div>
     <div class="tally" id="tally"></div>
   </header>
